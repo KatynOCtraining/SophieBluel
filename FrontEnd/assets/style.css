@@ -101,11 +101,7 @@ nav li a{
 }
 
 nav li a:hover{
-	background-color: #1D6154;
-	color: white;
-	border-radius: 60px;
-	border: 1px solid #1D6154;
-	padding: 3px;
+color: #B1663C;
 }
 
 li:hover {

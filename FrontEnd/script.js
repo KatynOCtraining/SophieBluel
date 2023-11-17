@@ -45,3 +45,49 @@ async function fetchData(filter = '') {
   // Initialiser avec toutes les données
   fetchData();
 
+
+
+
+  document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Empêche la soumission standard du formulaire
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const loginData = {
+        email: email,
+        password: password
+    };
+
+    fetch('http://localhost:5678/api/users/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      localStorage.setItem('userToken', data.token);
+      window.location.href = './index.html'; 
+        
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        // Gérez ici les erreurs (par exemple, affichez un message d'erreur)
+    });
+  });
+
+
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const editButton = document.getElementById('edit-button');
+
+    if (localStorage.getItem('userToken')) {
+        // Si l'utilisateur est connecté, affichez le bouton
+        editButton.style.display = 'block';
+    } else {
+        // Si l'utilisateur n'est pas connecté, cachez le bouton
+        editButton.style.display = 'none';
+    }
+});
