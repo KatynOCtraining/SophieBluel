@@ -95,6 +95,19 @@ nav li {
 	font-size: 1.2em;
 }
 
+nav li a{
+	text-decoration: none;
+	color: black;
+}
+
+nav li a:hover{
+	background-color: #1D6154;
+	color: white;
+	border-radius: 60px;
+	border: 1px solid #1D6154;
+	padding: 3px;
+}
+
 li:hover {
 	color: #B1663C;
 }
@@ -124,6 +137,29 @@ li:hover {
 #portfolio h2 {
 	text-align: center;
 	margin-bottom: 1em;
+}
+
+.btn_filters{
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-bottom: 40px;
+}
+
+
+.filters{
+	font-family: 'Syne';
+	font-size: 16px;
+	background-color: white;
+	color: #1D6154;
+	border-radius: 60px;
+	border: 1px solid #1D6154;
+}
+
+
+.filters:hover{
+	color: white;
+	background-color: #1D6154;
 }
 .gallery {
 	width: 100%;
@@ -184,5 +220,62 @@ footer nav ul {
 	display: flex;
 	justify-content: flex-end;
 	margin: 2em
+}
+
+
+/* Page de Login*/
+
+.body_login{
+	background: #fffff8;
+}
+
+.form_container{
+	display: flex;
+	flex-direction: column;
+	
+	text-align: center;
+    margin-top: 20%;
+	gap: 52px;
+
+
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alignement des enfants à gauche */
+    width: 300px; /* Largeur fixe pour aligner les labels avec les inputs */
+    margin: 0 auto 50px; /* Centrage du form-group et espace en bas */
+	gap: 10px;
+	transform: translateX(-40px);
+}
+.form-group input{
+	width: 379px;
+	height: 51px; 
+	margin: 0 auto;
+	background: white;
+    box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+}
+.form-group label {
+	color: #3D3D3D;
+    font-family: 'Work Sans';
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+#login-form button[type="submit"] {
+    border-radius: 60px;
+    background: #1D6154;
+    color: white;
+    padding: 10px 20px; 
+    border: none; 
+    width: 179px;
+	height: 36px;
+    cursor: pointer;
+	font-family: 'Syne';
+	font-size: 14px;
+	font-weight: 700;
 }
 
