@@ -22,6 +22,7 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+	background: #fffff8;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
@@ -30,6 +31,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	
 }
 ol, ul {
 	list-style: none;
@@ -274,4 +276,47 @@ footer nav ul {
 	font-size: 14px;
 	font-weight: 700;
 }
+
+
+
+
+
+/*Loggé*/
+
+#edit-button{
+	display: none;
+	
+}
+
+
+.projet_title{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+	gap: 30px;
+	
+}
+
+
+.projet_title button {
+	border: none;
+	background: #fffff8;
+	font-family: 'Work Sans';
+	font-size: 14px;
+	margin-bottom: 30px;
+	cursor: pointer;
+	
+}
+.projet_title button img{
+	margin-right: 15px;
+}
+.projet_title button:hover{
+	color: #1D6154;
+	border-bottom: 1px solid #1D6154;
+}
+
+
+
 

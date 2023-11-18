@@ -47,47 +47,34 @@ async function fetchData(filter = '') {
 
 
 
-
-  document.getElementById('login-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Empêche la soumission standard du formulaire
-
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    const loginData = {
-        email: email,
-        password: password
-    };
-
-    fetch('http://localhost:5678/api/users/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-      localStorage.setItem('userToken', data.token);
-      window.location.href = './index.html'; 
-        
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        // Gérez ici les erreurs (par exemple, affichez un message d'erreur)
-    });
-  });
-
-
-  document.addEventListener('DOMContentLoaded', (event) => {
-    const editButton = document.getElementById('edit-button');
+  document.addEventListener('DOMContentLoaded', () => {
+    const loginLogoutButton = document.getElementById('login-logout-button');
 
     if (localStorage.getItem('userToken')) {
-        // Si l'utilisateur est connecté, affichez le bouton
-        editButton.style.display = 'block';
+        loginLogoutButton.textContent = 'Logout';
+        loginLogoutButton.addEventListener('click', () => {
+            localStorage.removeItem('userToken');
+            window.location.reload(); // ou redirigez vers la page de login
+        });
     } else {
-        // Si l'utilisateur n'est pas connecté, cachez le bouton
+        loginLogoutButton.textContent = 'Login';
+        loginLogoutButton.addEventListener('click', () => {
+            window.location.href = 'login.html'; // Redirection vers la page de login
+        });
+    }
+
+   
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const editButton = document.getElementById('edit-button');
+
+    // Vérifie si l'utilisateur est connecté
+    if (localStorage.getItem('userToken')) {
+        // Affiche le bouton si un token est trouvé
+        editButton.style.display = 'block'; // ou 'inline', 'inline-block', selon le contexte
+    } else {
+        // Cache le bouton si aucun token n'est trouvé
         editButton.style.display = 'none';
     }
 });

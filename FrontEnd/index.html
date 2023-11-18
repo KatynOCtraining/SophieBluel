@@ -9,7 +9,8 @@
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans:wght@500&display=swap" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
-	<script src="./script.js" defer></script>
+<script src="auth.js"></script>	
+<script type="module" src="script.js"></script>
 </head>
 <body>
 <header>
@@ -18,7 +19,7 @@
 		<ul>
 			<li>projets</li>
 			<li>contact</li>
-			<li><a href="./login.html">login</a></li>
+			<li  id="login-logout-button"><a href="./login.html">login</a></li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
@@ -36,8 +37,12 @@
 		</article>
 	</section>
 	<section id="portfolio">
+		<div class="projet_title">
 		<h2>Mes Projets</h2>
-		<button id="edit-button" style="display: none;">Modifier</button>
+		<button id="edit-button"> <img src="./assets/icons/modif_icon.svg">modifier</button>
+		</div>
+
+	
 		<div class="btn_filters">
 		   <button class="filters">Tous</button>
 		   <button class="filters">Objets</button>
