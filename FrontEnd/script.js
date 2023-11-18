@@ -77,4 +77,62 @@ async function fetchData(filter = '') {
         // Cache le bouton si aucun token n'est trouvé
         editButton.style.display = 'none';
     }
+  });
+
+
+
+
+  document.getElementById('edit-button').addEventListener('click', function() {
+    document.getElementById('modal').style.display = 'block';
+    loadGallery(); // Chargez les images lorsque la modale s'ouvre
 });
+
+document.querySelector('.close-button').addEventListener('click', function() {
+    document.getElementById('modal').style.display = 'none';
+});
+window.onclick = function(event) {
+  const modal = document.getElementById('modal');
+  if (event.target == modal) {
+      modal.style.display = 'none';
+  }
+}
+
+
+
+
+
+
+
+
+
+
+function loadGallery() {
+  fetch('http://localhost:5678/api/works')
+      .then(response => response.json())
+      .then(images => {
+          const galleryContainer = document.querySelector('.gallery-container');
+          galleryContainer.innerHTML = '';
+
+          images.forEach(image => {
+              const imageContainer = document.createElement('div');
+              imageContainer.className = 'image-container';
+
+              const imgElement = document.createElement('img');
+              imgElement.src = image.imageUrl;
+              imgElement.alt = image.title || 'Image';
+
+              const iconOverlay = document.createElement('span');
+              iconOverlay.className = 'icon-overlay';
+              iconOverlay.innerHTML = '<img src="path_to_your_icon.png" alt="Icon">'; // Remplacez par le chemin de votre icône
+
+              imageContainer.appendChild(imgElement);
+              imageContainer.appendChild(iconOverlay);
+              galleryContainer.appendChild(imageContainer);
+
+              // Ajoutez ici des gestionnaires d'événements pour l'icône si nécessaire
+          });
+      })
+      .catch(error => {
+          console.error('Erreur lors du chargement de la galerie:', error);
+      });
+}

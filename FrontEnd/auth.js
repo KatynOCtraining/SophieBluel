@@ -10,6 +10,8 @@ document.getElementById('login-form').addEventListener('submit', function (event
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const errorMessage = document.getElementById('error-message');
+
     const loginData = { email, password };
 
     fetch('http://localhost:5678/api/users/login', {
@@ -19,17 +21,16 @@ document.getElementById('login-form').addEventListener('submit', function (event
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Échec de l\'authentification');
+            throw new Error('Oups, vos doigts ont ripés, veuillez vérifier vos identifiants.');
         }
         return response.json();
     })
     .then(data => {
-        console.log('Success:', data);
         localStorage.setItem('userToken', data.token);
         window.location.href = 'index.html';
     })
     .catch(error => {
-        console.error('Error:', error);
-        // Affichez ici un message d'erreur à l'utilisateur
+        errorMessage.textContent = error.message;
+        errorMessage.style.display = 'block'; // Affiche le message d'erreur
     });
 });

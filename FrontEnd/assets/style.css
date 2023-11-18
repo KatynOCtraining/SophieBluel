@@ -277,8 +277,11 @@ footer nav ul {
 	font-weight: 700;
 }
 
+/* error message*/
 
-
+#error-message{
+	color: red;
+}
 
 
 /*Loggé*/
@@ -320,3 +323,72 @@ footer nav ul {
 
 
 
+
+
+
+
+
+/*Modale*/
+.modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.30); /* Fond sombre semi-transparent */
+}
+
+.modal h3{
+	font-size: 26px;
+	font-family: 'Work Sans';
+	margin-top: 60px ;
+	margin-bottom: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+	width: 50%;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+   
+}
+
+.close-button {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 10px;
+}
+
+.gallery-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
