@@ -123,16 +123,117 @@ function loadGallery() {
 
               const iconOverlay = document.createElement('span');
               iconOverlay.className = 'icon-overlay';
-              iconOverlay.innerHTML = '<img src="path_to_your_icon.png" alt="Icon">'; // Remplacez par le chemin de votre icône
+              iconOverlay.innerHTML = '<img src="./assets/icons/trash-can-solid.svg" alt="Supprimer">'; // Icône de suppression
 
               imageContainer.appendChild(imgElement);
               imageContainer.appendChild(iconOverlay);
               galleryContainer.appendChild(imageContainer);
 
-              // Ajoutez ici des gestionnaires d'événements pour l'icône si nécessaire
+              // Gestionnaire d'événements pour la suppression
+              iconOverlay.addEventListener('click', function() {
+                  fetch(`http://localhost:5678/api/works/${image.id}`, { // Assurez-vous d'avoir l'ID correct de l'image
+                    method: 'DELETE',
+                    headers: {
+                      'Authorization': 'Bearer ' + localStorage.getItem('userToken') // Ajoutez l'en-tête d'autorisation
+                  }
+          
+                    
+                  })
+                  .then(response => {
+                      if (!response.ok) {
+                          throw new Error('Échec de la suppression');
+                      }
+                      imageContainer.remove(); // Supprime l'image du DOM
+                  })
+                  .catch(error => {
+                      console.error('Erreur lors de la suppression:', error);
+                      // Affichez ici un message d'erreur à l'utilisateur
+                  });
+              });
           });
       })
       .catch(error => {
           console.error('Erreur lors du chargement de la galerie:', error);
       });
 }
+
+
+document.getElementById('add_photo').addEventListener('click', function() {
+  const modalContent = document.querySelector('.modal-content');
+
+  modalContent.innerHTML = `
+      <span class="close-button">&times;</span>
+      <h3>Ajout Photo</h3>
+      <div id="form-add-photo">
+          <input type="file" id="photo-upload">
+          <input type="text" id="photo-title" placeholder="Titre de la photo">
+         
+          <select id="photo-category">
+              <option value="categorie1">Appartements</option>
+              <option value="categorie2">Hotels & restaurants</option>
+              <option value="categorie2">Objets</option>
+              <!-- Autres options de catégorie -->
+          </select>
+          <button id="validate-button" class="validate-button">Valider</button>
+      </div>
+  `;
+
+  // Assurez-vous de rajouter le gestionnaire d'événements pour la nouvelle icône de fermeture
+  document.querySelector('.close-button').addEventListener('click', function() {
+      document.getElementById('modal').style.display = 'none';
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelector('validate-button').addEventListener('click', function() {
+    const title = document.getElementById('photo-title').value;
+    const imageUrl = document.getElementById('photo-url').value;
+    const categoryId = document.getElementById('photo-category').value;
+  
+
+  
+    const data = {
+        title: title,
+        imageUrl: imageUrl,
+        categoryId: categoryId,
+      
+    };
+  
+    fetch('http://localhost:5678/api/works', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Échec de l\'ajout du projet');
+        }
+        return response.json();
+    })
+    .then(data => {
+      console.log('Projet ajouté avec succès:', data);
+      loadGallery();
+        // Mettez à jour la galerie ici
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        // Gérez les erreurs ici
+    });
+  });
+});
