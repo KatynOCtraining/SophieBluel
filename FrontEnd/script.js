@@ -155,77 +155,67 @@ function loadGallery() {
     });
 }
 
-// Ajoute un écouteur d'événements au bouton pour ajouter une photoc//
 document.getElementById("add_photo").addEventListener("click", function () {
-  // Sélectionne le contenu de la fenêtre modalec//
-  const modalContent = document.querySelector(".modal-content");
+  document.getElementById("photoModal").style.display = "block";
+});
 
-  // Remplace le contenu de la fenêtre modale avec un formulaire d'ajout de photoc//
-  modalContent.innerHTML = `
-      <span class="close-button">&times;</span>
-      <h3>Ajout Photo</h3>
-      <div id="form-add-photo">
-          <input type="file" id="photo-upload">
-          <input type="text" id="photo-title" placeholder="Titre de la photo">
-          <select id="photo-category">
-              <option value="categorie1">Appartements</option>
-              <option value="categorie2">Hotels & restaurants</option>
-              <option value="categorie2">Objets</option>
-          </select>
-          <button id="validate-button" class="validate-button">Valider</button>
-      </div>
-  `;
-
-  // Ajoute un écouteur d'événements à la nouvelle icône de fermeture pour fermer la modale //
-  document
-    .querySelector(".close-button")
-    .addEventListener("click", function () {
-      document.getElementById("modal").style.display = "none";
-    });
+// Ajoute également un écouteur pour le bouton de fermeture
+document.querySelector(".close-button").addEventListener("click", function () {
+  document.getElementById("photoModal").style.display = "none";
 });
 
 // Ajoute un écouteur d'événement qui s'active une fois le contenu du DOM entièrement chargé //
 document.addEventListener("DOMContentLoaded", function () {
-  // Sélectionne le bouton de validation et ajoute un écouteur d'événement de clic //
-  document
-    .querySelector("#validate-button")
-    .addEventListener("click", function () {
-      // Récupère la valeur du titre depuis l'élément d'entrée du titre //
-      const title = document.getElementById("photo-title").value;
-      // Récupère l'URL de l'image depuis l'élément d'entrée de l'URL de l'image //
-      const imageUrl = document.getElementById("photo-url").value;
-      // Récupère l'ID de la catégorie depuis l'élément de sélection de catégorie //
-      const categoryId = document.getElementById("photo-category").value;
+  const btn = document.querySelector(".validate-button");
 
-      // Prépare les données à envoyer dans la requête POST //
-      const data = {
-        title: title,
-        imageUrl: imageUrl,
-        categoryId: categoryId,
-      };
+  btn.addEventListener("click", function (event) {
+    event.preventDefault();
+    const title = document.getElementById("photo-title").value;
+    const imageUrl = document.getElementById("photo-upload").files[0];
+    const category = document.getElementById("photo-category").value;
 
-      // Envoie une requête POST au serveur avec les données du formulaire //
-      fetch("http://localhost:5678/api/works", {
-        method: "POST", // Spécifie la méthode POST pour l'envoi de données //
-        headers: {
-          "Content-Type": "application/json", // Définit le type de contenu comme JSON //
-        },
-        body: JSON.stringify(data), // Convertit les données du formulaire en chaîne JSON //
+    const data = new FormData();
+    data.append("title", title);
+    data.append("image", imageUrl);
+    data.append("category", parseInt(category));
+
+    fetch("http://localhost:5678/api/works", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("userToken"),
+      },
+      body: data,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Échec de l'ajout du projet");
+        }
+        return response.json();
       })
-        .then((response) => {
-          if (!response.ok) {
-            // Lance une erreur si la réponse n'est pas OK //
-            throw new Error("Échec de l'ajout du projet");
-          }
-          return response.json(); // Convertit la réponse en JSON //
-        })
-        .then((data) => {
-          console.log("Projet ajouté avec succès:", data);
-          loadGallery(); // Recharge la galerie pour afficher le nouvel élément //
-        })
-        .catch((error) => {
-          console.error("Erreur:", error);
-          // Gère les erreurs ici, comme afficher un message à l'utilisateur //
-        });
-    });
+      .then((data) => {
+        console.log("Projet ajouté avec succès:", data);
+        loadGallery();
+        resetForm(); // Réinitialiser le formulaire après l'ajout réussi
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
+  });
+
+  // Réinitialisation du formulaire
+  function resetForm() {
+    document.getElementById("photo-title").value = "";
+    document.getElementById("photo-upload").value = "";
+    document.getElementById("photo-category").selectedIndex = 0;
+  }
 });
+
+window.addEventListener("click", function (event) {
+  var modal = document.getElementById("photoModal");
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+// Ajoute un écouteur d'événement qui s'active une fois le contenu du DOM entièrement chargé //
+// Sélectionne le bouton de validation et ajoute un écouteur d'événement de clic //
