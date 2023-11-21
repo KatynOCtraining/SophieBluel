@@ -1,25 +1,18 @@
-// Commande à lancer pour lancer le serv : cd D:\Openclassroom\SophieBluel\Backend    -npm start //
-
-// Fonction pour récupérer et afficher des données depuis l'API //
+// Commandes de lancements : cd D:\Openclassroom\SophieBluel\Backend   - npm start
+// Fonction asynchrone pour récupérer et afficher des données depuis l'API //
 async function fetchData(filter = "") {
   try {
-    // Envoie une requête GET à l'API //
     const response = await fetch("http://localhost:5678/api/works");
-    // Gère les erreurs de réponse HTTP //
     if (!response.ok) {
       throw new Error(`Erreur HTTP: ${response.status}`);
     }
-    // Convertit la réponse en JSON //
     const data = await response.json();
 
-    // Sélectionne la div de la galerie et efface son contenu //
     const gallery = document.querySelector(".gallery");
     gallery.innerHTML = "";
 
-    // Boucle sur les données reçues et affiche les éléments correspondant au filtre //
     data.forEach((item) => {
       if (filter === "" || item.category.name === filter) {
-        // Crée et ajoute des éléments pour chaque donnée
         const figure = document.createElement("figure");
         const img = document.createElement("img");
         img.src = item.imageUrl;
@@ -34,7 +27,6 @@ async function fetchData(filter = "") {
       }
     });
   } catch (error) {
-    // Affiche une erreur en cas de problème lors de la récupération des données //
     console.error("Erreur lors de la récupération des données: ", error);
   }
 }
@@ -42,35 +34,33 @@ async function fetchData(filter = "") {
 // Gestionnaires d'événements pour les boutons de filtre //
 document.querySelectorAll(".filters").forEach((button) => {
   button.addEventListener("click", () => {
-    const category = button.textContent; // Utilise le texte du bouton comme filtre //
+    const category = button.textContent;
     fetchData(category === "Tous" ? "" : category);
   });
 });
 
-// Initialise la galerie avec toutes les données au chargement //
+// Initialise la galerie avec toutes les données au chargement de la page //
 fetchData();
 
-// Gestionnaire d'événements pour le bouton de connexion/déconnexion //
+// Event Listener pour le login //
 document.addEventListener("DOMContentLoaded", () => {
   const loginLogoutButton = document.getElementById("login-logout-button");
 
   if (localStorage.getItem("userToken")) {
-    // Change le texte et le comportement du bouton si l'utilisateur est connecté //
     loginLogoutButton.textContent = "Logout";
     loginLogoutButton.addEventListener("click", () => {
       localStorage.removeItem("userToken");
-      window.location.reload(); // Recharge la page ou redirige vers la page de connexion //
+      window.location.reload();
     });
   } else {
-    // Réglage pour un utilisateur non connecté //
     loginLogoutButton.textContent = "Login";
     loginLogoutButton.addEventListener("click", () => {
-      window.location.href = "login.html"; // Redirige vers la page de connexion //
+      window.location.href = "login.html";
     });
   }
 });
 
-// Gestionnaire pour afficher/cacher le bouton d'édition selon l'état de connexion //
+// N'affiche le bouton d'edit que lorsque le token de co est dans le localStorage //
 document.addEventListener("DOMContentLoaded", () => {
   const editButton = document.getElementById("edit-button");
 
@@ -81,57 +71,59 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Gestionnaire pour ouvrir et fermer une modale d'édition //
+// Ouverture de Modal au clic sur le bouton modifier //
 document.getElementById("edit-button").addEventListener("click", function () {
   document.getElementById("modal").style.display = "block";
-  loadGallery(); // Charge les images pour l'édition //
+  loadGallery();
 });
 
+// Fermeture de la modale par la croix //
 document.querySelector(".close-button").addEventListener("click", function () {
   document.getElementById("modal").style.display = "none";
 });
 
-// Ferme la modale si on clique en dehors de celle-ci //
+// La croix de modal2 ferme les deux modales d'un coup //
+document.querySelector("#close-button2").addEventListener("click", function () {
+  document.getElementById("modal").style.display = "none";
+  document.getElementById("modal2").style.display = "none";
+});
+
+// Fermeture des modales si l'on clic en dehors //
 window.onclick = function (event) {
-  const modal = document.getElementById("modal");
-  if (event.target == modal) {
-    modal.style.display = "none";
+  if (event.target == document.getElementById("modal")) {
+    document.getElementById("modal").style.display = "none";
+  }
+  if (event.target == document.getElementById("modal2")) {
+    document.getElementById("modal2").style.display = "none";
   }
 };
 
+// Mise à jour de la gallery-container //
 function loadGallery() {
-  // Envoie une requête HTTP GET pour récupérer les données du serveur //
   fetch("http://localhost:5678/api/works")
-    .then((response) => response.json()) // Convertit la réponse en JSON //
+    .then((response) => response.json())
     .then((images) => {
-      // Sélectionne le conteneur de la galerie dans le DOM //
       const galleryContainer = document.querySelector(".gallery-container");
-      galleryContainer.innerHTML = ""; // Efface le contenu actuel de la galerie //
+      galleryContainer.innerHTML = "";
 
-      // Itère sur chaque image reçue du serveur //
       images.forEach((image) => {
-        const imageContainer = document.createElement("div"); // Crée une nouvelle div pour chaque image//
-        imageContainer.className = "image-container"; // Attribue une classe pour le style //
+        const imageContainer = document.createElement("div");
+        imageContainer.className = "image-container";
 
-        const imgElement = document.createElement("img"); // Crée un élément img //
-        imgElement.src = image.imageUrl; // Définit l'URL de l'image //
-        imgElement.alt = image.title || "Image"; // Définit le texte alternatif de l'image //
+        const imgElement = document.createElement("img");
+        imgElement.src = image.imageUrl;
+        imgElement.alt = image.title || "Image";
 
-        // Crée un élément pour l'icône de suppression //
         const iconOverlay = document.createElement("span");
         iconOverlay.className = "icon-overlay";
         iconOverlay.innerHTML =
           '<img src="./assets/icons/trash-can-solid.svg" alt="Supprimer">';
 
-        // Ajoute l'image et l'icône de suppression au conteneur de l'image //
         imageContainer.appendChild(imgElement);
         imageContainer.appendChild(iconOverlay);
-        // Ajoute le conteneur de l'image au conteneur de la galerie //
         galleryContainer.appendChild(imageContainer);
 
-        // Ajoute un écouteur d'événements pour gérer la suppression de l'image//
         iconOverlay.addEventListener("click", function () {
-          // Envoie une requête DELETE pour supprimer l'image du serveur //
           fetch(`http://localhost:5678/api/works/${image.id}`, {
             method: "DELETE",
             headers: {
@@ -142,7 +134,9 @@ function loadGallery() {
               if (!response.ok) {
                 throw new Error("Échec de la suppression");
               }
-              imageContainer.remove(); // Supprime l'image du DOM en cas de succès //
+              imageContainer.remove();
+              fetchData(); // Met à jour la galerie .gallery //
+              loadGallery(); // Met à jour la galerie .gallery-container //
             })
             .catch((error) => {
               console.error("Erreur lors de la suppression:", error);
@@ -155,18 +149,19 @@ function loadGallery() {
     });
 }
 
+// EvenListener du bouton ajout de photo//
 document.getElementById("add_photo").addEventListener("click", function () {
-  document.getElementById("photoModal").style.display = "block";
+  document.getElementById("modal2").style.display = "block";
 });
 
-// Ajoute également un écouteur pour le bouton de fermeture
-document.querySelector(".close-button").addEventListener("click", function () {
-  document.getElementById("photoModal").style.display = "none";
+// La flèche de retour ramène sur modal1//
+document.querySelector(".back-arrow").addEventListener("click", function () {
+  document.getElementById("modal2").style.display = "none";
 });
 
-// Ajoute un écouteur d'événement qui s'active une fois le contenu du DOM entièrement chargé //
+// Listener du bouton valider //
 document.addEventListener("DOMContentLoaded", function () {
-  const btn = document.querySelector(".validate-button");
+  const btn = document.querySelector("#validate-button");
 
   btn.addEventListener("click", function (event) {
     event.preventDefault();
@@ -194,28 +189,20 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((data) => {
         console.log("Projet ajouté avec succès:", data);
-        loadGallery();
-        resetForm(); // Réinitialiser le formulaire après l'ajout réussi
+        fetchData(); // Met à jour la galerie .gallery //
+        loadGallery(); // Met à jour la galerie .gallery-container //
+        document.getElementById("modal2").style.display = "none"; // Ferme la modal2 //
+        resetForm(); // Reset le formulaire //
       })
       .catch((error) => {
         console.error("Erreur:", error);
       });
   });
 
-  // Réinitialisation du formulaire
+  // Fonction pour reset le formulaire après un ajout //
   function resetForm() {
     document.getElementById("photo-title").value = "";
     document.getElementById("photo-upload").value = "";
     document.getElementById("photo-category").selectedIndex = 0;
   }
 });
-
-window.addEventListener("click", function (event) {
-  var modal = document.getElementById("photoModal");
-  if (event.target === modal) {
-    modal.style.display = "none";
-  }
-});
-
-// Ajoute un écouteur d'événement qui s'active une fois le contenu du DOM entièrement chargé //
-// Sélectionne le bouton de validation et ajoute un écouteur d'événement de clic //

@@ -386,9 +386,10 @@ footer nav ul {
 }
 
 /*Modale*/
-.modal {
+.modal,
+.modal2 {
   position: fixed;
-  z-index: 1;
+  z-index: 100;
   left: 0;
   top: 0;
   width: 100%;
@@ -404,14 +405,15 @@ footer nav ul {
   margin-bottom: 60px;
 }
 
-.modal-content {
+.modal-content,
+.modal2 .modal-content {
   background-color: #fefefe;
   margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
   border-radius: 10px;
-  width: 50%;
-  height: 50%;
+  width: 50%; /* Ajustez la largeur si nécessaire */
+  height: 60%; /* Ajustez la hauteur si nécessaire */
   position: relative;
   display: flex;
   flex-direction: column;
@@ -429,13 +431,26 @@ footer nav ul {
   font-size: 28px;
 }
 
+#close-button2 {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: black;
+  font-size: 28px;
+}
+
 .close-button:hover,
 .close-button:focus {
   color: black;
   text-decoration: none;
   cursor: pointer;
 }
-
+.close-button2:hover,
+.close-button2:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
 .gallery-container {
   display: flex;
   flex-wrap: wrap;
@@ -563,7 +578,9 @@ footer nav ul {
   border-radius: 60px;
   background: #1d6154;
 }
-
+.modal2 {
+  z-index: 101;
+}
 .champ_photo {
   background-color: #e8f1f6;
   cursor: pointer;
@@ -597,4 +614,11 @@ footer nav ul {
   height: 36px;
   color: #306685;
   border-radius: 50px;
+}
+
+.back-arrow {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
 }

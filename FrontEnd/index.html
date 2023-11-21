@@ -12,6 +12,10 @@
     />
     <meta name="description" content="" />
     <link rel="stylesheet" href="./assets/style.css" />
+    <script
+      src="https://kit.fontawesome.com/bb33b41c96.js"
+      crossorigin="anonymous"
+    ></script>
     <script src="auth.js"></script>
     <script src="script.js" defer></script>
   </head>
@@ -68,9 +72,12 @@
 
               <button id="add_photo">Ajouter une photo</button>
             </div>
-            <div id="photoModal" class="modal" style="display: none">
+            <div id="modal2" class="modal2" style="display: none">
               <div class="modal-content">
-                <span class="close-button">&times;</span>
+                <span id="close-button2">&times;</span>
+                <span class="back-arrow"
+                  ><i class="fa-solid fa-arrow-left"></i
+                ></span>
                 <h3>Ajout Photo</h3>
                 <div id="form-add-photo">
                   <label for="photo-upload" class="champ_photo">
@@ -88,9 +95,9 @@
 
                   <label for="photo-category">Catégorie</label>
                   <select id="photo-category">
-                    <option value="1">Appartements</option>
-                    <option value="2">Hotels & restaurants</option>
-                    <option value="3">Objets</option>
+                    <option value="0">Appartements</option>
+                    <option value="1">Hotels & restaurants</option>
+                    <option value="2">Objets</option>
                   </select>
                   <button id="validate-button" class="validate-button">
                     Valider
