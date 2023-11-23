@@ -16,7 +16,7 @@
       src="https://kit.fontawesome.com/bb33b41c96.js"
       crossorigin="anonymous"
     ></script>
-    <script src="auth.js"></script>
+
     <script src="script.js" defer></script>
   </head>
   <body>
@@ -85,6 +85,12 @@
                       src="./assets/icons/picture-svgrepo-com 1.png"
                       alt=""
                     />
+                    <img
+                      src=""
+                      alt=""
+                      id="image-preview"
+                      style="display: none"
+                    />
                     <span class="add_photo_btn">+ Ajouter photo</span>
                     <p>jpg, png: 4mo max</p>
                   </label>
@@ -95,9 +101,9 @@
 
                   <label for="photo-category">Catégorie</label>
                   <select id="photo-category">
-                    <option value="0">Appartements</option>
-                    <option value="1">Hotels & restaurants</option>
-                    <option value="2">Objets</option>
+                    <option value="2">Appartements</option>
+                    <option value="3">Hotels & restaurants</option>
+                    <option value="1">Objets</option>
                   </select>
                   <button id="validate-button" class="validate-button">
                     Valider
@@ -109,10 +115,10 @@
         </div>
 
         <div class="btn_filters">
-          <button class="filters">Tous</button>
-          <button class="filters">Objets</button>
-          <button class="filters">Appartements</button>
-          <button class="filters">Hotels & restaurants</button>
+          <button class="filters" data-id="0">Tous</button>
+          <button class="filters" data-id="1">Objets</button>
+          <button class="filters" data-id="2">Appartements</button>
+          <button class="filters" data-id="3">Hotels & restaurants</button>
         </div>
 
         <div class="gallery"></div>

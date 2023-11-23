@@ -1,6 +1,10 @@
 // Commandes de lancements : cd D:\Openclassroom\SophieBluel\Backend   - npm start
-// Fonction asynchrone pour récupérer et afficher des données depuis l'API //
-async function fetchData(filter = "") {
+// Variable globale pour conserver le filtre actuel
+let currentFilter = "Tous";
+
+// Fonction asynchrone pour récupérer et afficher des données depuis l'API
+async function fetchData(filter = currentFilter) {
+  currentFilter = filter; // Mise à jour du filtre actuel
   try {
     const response = await fetch("http://localhost:5678/api/works");
     if (!response.ok) {
@@ -8,12 +12,23 @@ async function fetchData(filter = "") {
     }
     const data = await response.json();
 
+    const categoryToDataId = {
+      Objets: "1",
+      Appartements: "2",
+      "Hotels & restaurants": "3",
+      // Ajoute d'autres correspondances si nécessaire
+    };
+
     const gallery = document.querySelector(".gallery");
     gallery.innerHTML = "";
 
     data.forEach((item) => {
-      if (filter === "" || item.category.name === filter) {
+      if (filter === "Tous" || item.category.name === filter) {
         const figure = document.createElement("figure");
+        figure.setAttribute(
+          "data-catID",
+          categoryToDataId[item.category.name] || "0"
+        );
         const img = document.createElement("img");
         img.src = item.imageUrl;
         img.alt = item.title;
@@ -31,18 +46,18 @@ async function fetchData(filter = "") {
   }
 }
 
-// Gestionnaires d'événements pour les boutons de filtre //
+// Gestionnaires d'événements pour les boutons de filtre
 document.querySelectorAll(".filters").forEach((button) => {
-  button.addEventListener("click", () => {
-    const category = button.textContent;
-    fetchData(category === "Tous" ? "" : category);
+  button.addEventListener("click", (e) => {
+    const filter = e.currentTarget.textContent;
+    fetchData(filter);
   });
 });
 
-// Initialise la galerie avec toutes les données au chargement de la page //
+// Initialise la galerie avec toutes les données au chargement de la page
 fetchData();
 
-// Event Listener pour le login //
+// Event Listener pour le login
 document.addEventListener("DOMContentLoaded", () => {
   const loginLogoutButton = document.getElementById("login-logout-button");
 
@@ -60,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// N'affiche le bouton d'edit que lorsque le token de co est dans le localStorage //
+// N'affiche le bouton d'edit que lorsque le token de co est dans le localStorage
 document.addEventListener("DOMContentLoaded", () => {
   const editButton = document.getElementById("edit-button");
 
@@ -71,24 +86,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Ouverture de Modal au clic sur le bouton modifier //
+// Ouverture de Modal au clic sur le bouton modifier
 document.getElementById("edit-button").addEventListener("click", function () {
   document.getElementById("modal").style.display = "block";
   loadGallery();
 });
 
-// Fermeture de la modale par la croix //
+// Fermeture de la modale par la croix
 document.querySelector(".close-button").addEventListener("click", function () {
   document.getElementById("modal").style.display = "none";
 });
 
-// La croix de modal2 ferme les deux modales d'un coup //
+// La croix de modal2 ferme les deux modales d'un coup
 document.querySelector("#close-button2").addEventListener("click", function () {
   document.getElementById("modal").style.display = "none";
   document.getElementById("modal2").style.display = "none";
 });
 
-// Fermeture des modales si l'on clic en dehors //
+// Fermeture des modales si l'on clic en dehors
 window.onclick = function (event) {
   if (event.target == document.getElementById("modal")) {
     document.getElementById("modal").style.display = "none";
@@ -98,7 +113,7 @@ window.onclick = function (event) {
   }
 };
 
-// Mise à jour de la gallery-container //
+// Mise à jour de la gallery-container
 function loadGallery() {
   fetch("http://localhost:5678/api/works")
     .then((response) => response.json())
@@ -149,17 +164,17 @@ function loadGallery() {
     });
 }
 
-// EvenListener du bouton ajout de photo//
+// EvenListener du bouton ajout de photo
 document.getElementById("add_photo").addEventListener("click", function () {
   document.getElementById("modal2").style.display = "block";
 });
 
-// La flèche de retour ramène sur modal1//
+// La flèche de retour ramène sur modal1
 document.querySelector(".back-arrow").addEventListener("click", function () {
   document.getElementById("modal2").style.display = "none";
 });
 
-// Listener du bouton valider //
+// Listener du bouton valider
 document.addEventListener("DOMContentLoaded", function () {
   const btn = document.querySelector("#validate-button");
 
@@ -189,9 +204,9 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((data) => {
         console.log("Projet ajouté avec succès:", data);
-        fetchData(); // Met à jour la galerie .gallery //
+        fetchData(); // Applique le filtre actuel
         loadGallery(); // Met à jour la galerie .gallery-container //
-        document.getElementById("modal2").style.display = "none"; // Ferme la modal2 //
+        document.getElementById("modal2").style.display = "none";
         resetForm(); // Reset le formulaire //
       })
       .catch((error) => {
@@ -199,10 +214,77 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-  // Fonction pour reset le formulaire après un ajout //
+  // Fonction pour reset le formulaire après un ajout
   function resetForm() {
     document.getElementById("photo-title").value = "";
     document.getElementById("photo-upload").value = "";
     document.getElementById("photo-category").selectedIndex = 0;
   }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Gère le bouton de connexion/déconnexion
+  const loginLogoutButton = document.getElementById("login-logout-button");
+  if (localStorage.getItem("userToken")) {
+    loginLogoutButton.textContent = "Logout";
+    loginLogoutButton.addEventListener("click", () => {
+      localStorage.removeItem("userToken");
+      window.location.reload();
+    });
+
+    // Cache les boutons de filtrage
+    document.querySelectorAll(".filters").forEach((button) => {
+      button.style.display = "none";
+    });
+
+    // Affiche le bouton d'edit
+    const editButton = document.getElementById("edit-button");
+    editButton.style.display = "block";
+  } else {
+    loginLogoutButton.textContent = "Login";
+    loginLogoutButton.addEventListener("click", () => {
+      window.location.href = "login.html";
+    });
+
+    // Affiche les boutons de filtrage
+    document.querySelectorAll(".filters").forEach((button) => {
+      button.style.display = "block";
+    });
+
+    // Cache le bouton d'edit
+    const editButton = document.getElementById("edit-button");
+    editButton.style.display = "none";
+  }
+
+  document
+    .getElementById("photo-upload")
+    .addEventListener("change", function () {
+      const fileInput = this;
+      const preview = document.getElementById("image-preview");
+      const otherContents = document.querySelector(".champ_photo").children; // Sélectionne tous les enfants du label //
+
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.style.display = "block"; // Affiche l'aperçu //
+
+          // Cache les autres contenus du label //
+          Array.from(otherContents).forEach((child) => {
+            if (child !== preview) {
+              child.style.display = "none";
+            }
+          });
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      } else {
+        preview.src = "";
+        preview.style.display = "none"; // Cache l'aperçu si besoin //
+
+        // Réaffiche les autres contenus du label //
+        Array.from(otherContents).forEach((child) => {
+          child.style.display = "";
+        });
+      }
+    });
 });

@@ -186,6 +186,7 @@ nav li a:hover {
 
 li:hover {
   color: #b1663c;
+  cursor: pointer;
 }
 #introduction {
   display: flex;
@@ -234,6 +235,7 @@ li:hover {
 .filters:hover {
   color: white;
   background-color: #1d6154;
+  cursor: pointer;
 }
 .gallery {
   width: 100%;
@@ -604,6 +606,13 @@ footer nav ul {
   background: #e8f1f6;
   font-size: 10px;
   color: #444;
+}
+
+#image-preview {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+  margin: 0 auto;
 }
 .add_photo_btn {
   display: flex;
