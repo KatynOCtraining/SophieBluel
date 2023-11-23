@@ -1,61 +1,62 @@
 // Commandes de lancements : cd D:\Openclassroom\SophieBluel\Backend   - npm start
-// Variable globale pour conserver le filtre actuel
+// Variable globale pour conserver le filtre actuel et toutes les données
 let currentFilter = "Tous";
+let allData = [];
 
-// Fonction asynchrone pour récupérer et afficher des données depuis l'API
-async function fetchData(filter = currentFilter) {
-  currentFilter = filter; // Mise à jour du filtre actuel
+// Fonction asynchrone pour charger les données depuis l'API une seule fois
+async function loadInitialData() {
   try {
     const response = await fetch("http://localhost:5678/api/works");
     if (!response.ok) {
       throw new Error(`Erreur HTTP: ${response.status}`);
     }
-    const data = await response.json();
-
-    const categoryToDataId = {
-      Objets: "1",
-      Appartements: "2",
-      "Hotels & restaurants": "3",
-      // Ajoute d'autres correspondances si nécessaire
-    };
-
-    const gallery = document.querySelector(".gallery");
-    gallery.innerHTML = "";
-
-    data.forEach((item) => {
-      if (filter === "Tous" || item.category.name === filter) {
-        const figure = document.createElement("figure");
-        figure.setAttribute(
-          "data-catID",
-          categoryToDataId[item.category.name] || "0"
-        );
-        const img = document.createElement("img");
-        img.src = item.imageUrl;
-        img.alt = item.title;
-
-        const figcaption = document.createElement("figcaption");
-        figcaption.textContent = item.title;
-
-        figure.appendChild(img);
-        figure.appendChild(figcaption);
-        gallery.appendChild(figure);
-      }
-    });
+    allData = await response.json();
+    applyFilter(currentFilter); // Appliquer le filtre initial
   } catch (error) {
-    console.error("Erreur lors de la récupération des données: ", error);
+    console.error("Erreur lors du chargement initial des données: ", error);
   }
+}
+
+// Fonction pour appliquer un filtre sur les données stockées localement
+function applyFilter(filter) {
+  const categoryToDataId = {
+    Objets: "1",
+    Appartements: "2",
+    "Hotels & restaurants": "3",
+    // Ajoute d'autres correspondances si nécessaire
+  };
+
+  const gallery = document.querySelector(".gallery");
+  gallery.innerHTML = "";
+
+  allData.forEach((item) => {
+    if (filter === "Tous" || item.category.name === filter) {
+      const figure = document.createElement("figure");
+      figure.setAttribute(
+        "data-catID",
+        categoryToDataId[item.category.name] || "0"
+      );
+      const img = document.createElement("img");
+      img.src = item.imageUrl;
+      img.alt = item.title;
+
+      const figcaption = document.createElement("figcaption");
+      figcaption.textContent = item.title;
+
+      figure.appendChild(img);
+      figure.appendChild(figcaption);
+      gallery.appendChild(figure);
+    }
+  });
 }
 
 // Gestionnaires d'événements pour les boutons de filtre
 document.querySelectorAll(".filters").forEach((button) => {
   button.addEventListener("click", (e) => {
     const filter = e.currentTarget.textContent;
-    fetchData(filter);
+    applyFilter(filter);
   });
 });
-
-// Initialise la galerie avec toutes les données au chargement de la page
-fetchData();
 
 // Event Listener pour le login
 document.addEventListener("DOMContentLoaded", () => {
@@ -67,21 +68,28 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.removeItem("userToken");
       window.location.reload();
     });
+
+    // Cache les boutons de filtrage
+    document.querySelectorAll(".filters").forEach((button) => {
+      button.style.display = "none";
+    });
+
+    // Affiche le bouton d'edit
+    const editButton = document.getElementById("edit-button");
+    editButton.style.display = "block";
   } else {
     loginLogoutButton.textContent = "Login";
     loginLogoutButton.addEventListener("click", () => {
       window.location.href = "login.html";
     });
-  }
-});
 
-// N'affiche le bouton d'edit que lorsque le token de co est dans le localStorage
-document.addEventListener("DOMContentLoaded", () => {
-  const editButton = document.getElementById("edit-button");
+    // Affiche les boutons de filtrage
+    document.querySelectorAll(".filters").forEach((button) => {
+      button.style.display = "block";
+    });
 
-  if (localStorage.getItem("userToken")) {
-    editButton.style.display = "block";
-  } else {
+    // Cache le bouton d'edit
+    const editButton = document.getElementById("edit-button");
     editButton.style.display = "none";
   }
 });
@@ -117,11 +125,14 @@ window.onclick = function (event) {
 function loadGallery() {
   fetch("http://localhost:5678/api/works")
     .then((response) => response.json())
-    .then((images) => {
+    .then((data) => {
+      allData = data; // Mettre à jour les données locales
+      applyFilter(currentFilter); // Met à jour la galerie .gallery
+
       const galleryContainer = document.querySelector(".gallery-container");
       galleryContainer.innerHTML = "";
 
-      images.forEach((image) => {
+      data.forEach((image) => {
         const imageContainer = document.createElement("div");
         imageContainer.className = "image-container";
 
@@ -150,8 +161,7 @@ function loadGallery() {
                 throw new Error("Échec de la suppression");
               }
               imageContainer.remove();
-              fetchData(); // Met à jour la galerie .gallery //
-              loadGallery(); // Met à jour la galerie .gallery-container //
+              loadGallery(); // Rafraîchit les deux galeries après la suppression
             })
             .catch((error) => {
               console.error("Erreur lors de la suppression:", error);
@@ -164,7 +174,7 @@ function loadGallery() {
     });
 }
 
-// EvenListener du bouton ajout de photo
+// Listener du bouton valider pour l'ajout d'une photo
 document.getElementById("add_photo").addEventListener("click", function () {
   document.getElementById("modal2").style.display = "block";
 });
@@ -174,7 +184,6 @@ document.querySelector(".back-arrow").addEventListener("click", function () {
   document.getElementById("modal2").style.display = "none";
 });
 
-// Listener du bouton valider
 document.addEventListener("DOMContentLoaded", function () {
   const btn = document.querySelector("#validate-button");
 
@@ -204,87 +213,44 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((data) => {
         console.log("Projet ajouté avec succès:", data);
-        fetchData(); // Applique le filtre actuel
-        loadGallery(); // Met à jour la galerie .gallery-container //
         document.getElementById("modal2").style.display = "none";
-        resetForm(); // Reset le formulaire //
+        loadGallery(); // Rafraîchit les deux galeries après l'ajout
       })
       .catch((error) => {
         console.error("Erreur:", error);
       });
   });
-
-  // Fonction pour reset le formulaire après un ajout
-  function resetForm() {
-    document.getElementById("photo-title").value = "";
-    document.getElementById("photo-upload").value = "";
-    document.getElementById("photo-category").selectedIndex = 0;
-  }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Gère le bouton de connexion/déconnexion
-  const loginLogoutButton = document.getElementById("login-logout-button");
-  if (localStorage.getItem("userToken")) {
-    loginLogoutButton.textContent = "Logout";
-    loginLogoutButton.addEventListener("click", () => {
-      localStorage.removeItem("userToken");
-      window.location.reload();
-    });
+document.getElementById("photo-upload").addEventListener("change", function () {
+  const fileInput = this;
+  const preview = document.getElementById("image-preview");
+  const otherContents = document.querySelector(".champ_photo").children;
 
-    // Cache les boutons de filtrage
-    document.querySelectorAll(".filters").forEach((button) => {
-      button.style.display = "none";
-    });
+  if (fileInput.files && fileInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+      preview.style.display = "block";
 
-    // Affiche le bouton d'edit
-    const editButton = document.getElementById("edit-button");
-    editButton.style.display = "block";
+      // Cache les autres contenus du label
+      Array.from(otherContents).forEach((child) => {
+        if (child !== preview) {
+          child.style.display = "none";
+        }
+      });
+    };
+    reader.readAsDataURL(fileInput.files[0]);
   } else {
-    loginLogoutButton.textContent = "Login";
-    loginLogoutButton.addEventListener("click", () => {
-      window.location.href = "login.html";
-    });
+    preview.src = "";
+    preview.style.display = "none"; // Cache l'aperçu si besoin
 
-    // Affiche les boutons de filtrage
-    document.querySelectorAll(".filters").forEach((button) => {
-      button.style.display = "block";
+    // Réaffiche les autres contenus du label
+    Array.from(otherContents).forEach((child) => {
+      child.style.display = "";
     });
-
-    // Cache le bouton d'edit
-    const editButton = document.getElementById("edit-button");
-    editButton.style.display = "none";
   }
-
-  document
-    .getElementById("photo-upload")
-    .addEventListener("change", function () {
-      const fileInput = this;
-      const preview = document.getElementById("image-preview");
-      const otherContents = document.querySelector(".champ_photo").children; // Sélectionne tous les enfants du label //
-
-      if (fileInput.files && fileInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          preview.src = e.target.result;
-          preview.style.display = "block"; // Affiche l'aperçu //
-
-          // Cache les autres contenus du label //
-          Array.from(otherContents).forEach((child) => {
-            if (child !== preview) {
-              child.style.display = "none";
-            }
-          });
-        };
-        reader.readAsDataURL(fileInput.files[0]);
-      } else {
-        preview.src = "";
-        preview.style.display = "none"; // Cache l'aperçu si besoin //
-
-        // Réaffiche les autres contenus du label //
-        Array.from(otherContents).forEach((child) => {
-          child.style.display = "";
-        });
-      }
-    });
 });
+
+// Initialise la galerie avec toutes les données au chargement de la page
+loadInitialData();
