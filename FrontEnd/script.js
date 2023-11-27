@@ -50,6 +50,49 @@ function applyFilter(filter) {
   });
 }
 
+//Récupération des catégories pour les intégrés à btn-filters//
+
+if (!localStorage.getItem("userToken")) {
+  fetch("http://localhost:5678/api/categories")
+    .then((res) => res.json())
+    .then((data) => {
+      data.forEach((elem) => {
+        const btn = document.createElement("button");
+        btn.classList.add("filters");
+        btn.innerHTML = elem.name;
+
+        document.querySelector(".btn_filters").appendChild(btn);
+      });
+
+      document.querySelectorAll(".filters").forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const filter = e.currentTarget.textContent;
+          applyFilter(filter);
+        });
+      });
+    });
+}
+
+//Récupération des catégories pour les intégrés au formulaire lors de l'ajout de work //
+
+fetch("http://localhost:5678/api/categories")
+  .then((res) => res.json())
+  .then((data) => {
+    const select = document.getElementById("photo-category");
+    select.innerHTML = ""; // Efface les options existantes
+
+    data.forEach((elem) => {
+      const option = document.createElement("option");
+      option.value = elem.id; // Supposons que chaque élément a un identifiant
+      option.textContent = elem.name; // Et un nom à afficher
+
+      select.appendChild(option);
+    });
+  })
+  .catch((error) => {
+    console.error("Erreur lors de la récupération des données:", error);
+  });
+
 // Gestionnaires d'événements pour les boutons de filtre //
 document.querySelectorAll(".filters").forEach((button) => {
   button.addEventListener("click", (e) => {
