@@ -1,29 +1,29 @@
 // Commandes de lancements : cd D:\Openclassroom\SophieBluel\Backend   - npm start
-// Variable globale pour conserver le filtre actuel et toutes les données
+// Variable globale pour conserver le filtre actuel et toutes les données //
 let currentFilter = "Tous";
 let allData = [];
 
-// Fonction asynchrone pour charger les données depuis l'API une seule fois
+// Fonction asynchrone pour charger les données depuis l'API //
 async function loadInitialData() {
   try {
+    //Récupération des données//
     const response = await fetch("http://localhost:5678/api/works");
     if (!response.ok) {
       throw new Error(`Erreur HTTP: ${response.status}`);
     }
     allData = await response.json();
-    applyFilter(currentFilter); // Appliquer le filtre initial
+    applyFilter(currentFilter); // Application du filtre initial //
   } catch (error) {
     console.error("Erreur lors du chargement initial des données: ", error);
   }
 }
 
-// Fonction pour appliquer un filtre sur les données stockées localement
+// Fonction pour appliquer un filtre sur les données stockées//
 function applyFilter(filter) {
   const categoryToDataId = {
     Objets: "1",
     Appartements: "2",
     "Hotels & restaurants": "3",
-    // Ajoute d'autres correspondances si nécessaire
   };
 
   const gallery = document.querySelector(".gallery");
@@ -50,7 +50,7 @@ function applyFilter(filter) {
   });
 }
 
-// Gestionnaires d'événements pour les boutons de filtre
+// Gestionnaires d'événements pour les boutons de filtre //
 document.querySelectorAll(".filters").forEach((button) => {
   button.addEventListener("click", (e) => {
     const filter = e.currentTarget.textContent;
@@ -58,7 +58,7 @@ document.querySelectorAll(".filters").forEach((button) => {
   });
 });
 
-// Event Listener pour le login
+// Event Listener pour le login //
 document.addEventListener("DOMContentLoaded", () => {
   const loginLogoutButton = document.getElementById("login-logout-button");
 
@@ -69,12 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.reload();
     });
 
-    // Cache les boutons de filtrage
+    // Cache les filtres si user est co //
     document.querySelectorAll(".filters").forEach((button) => {
       button.style.display = "none";
     });
 
-    // Affiche le bouton d'edit
+    // Affiche le bouton d'edit si user co //
     const editButton = document.getElementById("edit-button");
     editButton.style.display = "block";
   } else {
@@ -83,35 +83,35 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "login.html";
     });
 
-    // Affiche les boutons de filtrage
+    // Affiche les boutons de filtrage si user = visiteur //
     document.querySelectorAll(".filters").forEach((button) => {
       button.style.display = "block";
     });
 
-    // Cache le bouton d'edit
+    // Cache le bouton d'edit si user = visiteur //
     const editButton = document.getElementById("edit-button");
     editButton.style.display = "none";
   }
 });
 
-// Ouverture de Modal au clic sur le bouton modifier
+// Ouverture de modal1 au clic sur le bouton modifier //
 document.getElementById("edit-button").addEventListener("click", function () {
   document.getElementById("modal").style.display = "block";
   loadGallery();
 });
 
-// Fermeture de la modale par la croix
+// Fermeture de modal1 par la croix //
 document.querySelector(".close-button").addEventListener("click", function () {
   document.getElementById("modal").style.display = "none";
 });
 
-// La croix de modal2 ferme les deux modales d'un coup
+// La croix de modal2 ferme les deux modales d'un coup //
 document.querySelector("#close-button2").addEventListener("click", function () {
   document.getElementById("modal").style.display = "none";
   document.getElementById("modal2").style.display = "none";
 });
 
-// Fermeture des modales si l'on clic en dehors
+// Fermeture des modales si l'on clic en dehors //
 window.onclick = function (event) {
   if (event.target == document.getElementById("modal")) {
     document.getElementById("modal").style.display = "none";
@@ -121,13 +121,13 @@ window.onclick = function (event) {
   }
 };
 
-// Mise à jour de la gallery-container
+// Mise à jour de  .gallery-container //
 function loadGallery() {
   fetch("http://localhost:5678/api/works")
     .then((response) => response.json())
     .then((data) => {
-      allData = data; // Mettre à jour les données locales
-      applyFilter(currentFilter); // Met à jour la galerie .gallery
+      allData = data; // Met à jour les données locales //
+      applyFilter(currentFilter); // Met à jour la galerie .gallery //
 
       const galleryContainer = document.querySelector(".gallery-container");
       galleryContainer.innerHTML = "";
@@ -161,7 +161,7 @@ function loadGallery() {
                 throw new Error("Échec de la suppression");
               }
               imageContainer.remove();
-              loadGallery(); // Rafraîchit les deux galeries après la suppression
+              loadGallery(); // Rafraîchit les deux galeries après la suppression d'un work//
             })
             .catch((error) => {
               console.error("Erreur lors de la suppression:", error);
@@ -174,12 +174,12 @@ function loadGallery() {
     });
 }
 
-// Listener du bouton valider pour l'ajout d'une photo
+// Listener du bouton valider pour l'ajout d'une photo //
 document.getElementById("add_photo").addEventListener("click", function () {
   document.getElementById("modal2").style.display = "block";
 });
 
-// La flèche de retour ramène sur modal1
+// La flèche de retour de modal2 ramène sur modal1 //
 document.querySelector(".back-arrow").addEventListener("click", function () {
   document.getElementById("modal2").style.display = "none";
 });
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((data) => {
         console.log("Projet ajouté avec succès:", data);
         document.getElementById("modal2").style.display = "none";
-        loadGallery(); // Rafraîchit les deux galeries après l'ajout
+        loadGallery(); // Rafraîchit les deux galeries après l'ajout d'un work //
       })
       .catch((error) => {
         console.error("Erreur:", error);
@@ -233,7 +233,7 @@ document.getElementById("photo-upload").addEventListener("change", function () {
       preview.src = e.target.result;
       preview.style.display = "block";
 
-      // Cache les autres contenus du label
+      // Cache les autres contenus du label //
       Array.from(otherContents).forEach((child) => {
         if (child !== preview) {
           child.style.display = "none";
@@ -243,7 +243,7 @@ document.getElementById("photo-upload").addEventListener("change", function () {
     reader.readAsDataURL(fileInput.files[0]);
   } else {
     preview.src = "";
-    preview.style.display = "none"; // Cache l'aperçu si besoin
+    preview.style.display = "none"; // Cache l'aperçu si besoin //
 
     // Réaffiche les autres contenus du label
     Array.from(otherContents).forEach((child) => {
@@ -252,5 +252,5 @@ document.getElementById("photo-upload").addEventListener("change", function () {
   }
 });
 
-// Initialise la galerie avec toutes les données au chargement de la page
+// Initialise la galerie avec toutes les données au chargement de la page //
 loadInitialData();
