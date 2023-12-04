@@ -356,6 +356,19 @@ footer nav ul {
   font-weight: 700;
 }
 
+.forgetmdp {
+  color: #3d3d3d;
+  font-family: "Work Sans";
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.forgetmdp:hover {
+  color: #a7a7a7;
+  cursor: pointer;
+}
+
 /* error message*/
 
 #error-message {

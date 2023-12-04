@@ -83,9 +83,8 @@ fetch("http://localhost:5678/api/categories")
 
     data.forEach((elem) => {
       const option = document.createElement("option");
-      option.value = elem.id; // Supposons que chaque élément a un identifiant
-      option.textContent = elem.name; // Et un nom à afficher
-
+      option.value = elem.id;
+      option.textContent = elem.name;
       select.appendChild(option);
     });
   })
